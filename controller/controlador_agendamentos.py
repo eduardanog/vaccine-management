@@ -11,13 +11,17 @@ from controller.excecoes import CampoEmBrancoException
 from controller.excecoes import NenhumSelecionadoException
 from controller.excecoes import VacinaIndisponivelException
 
+
+from model.mediador import Mediator
+
 class ControladorAgendamento():
-    def __init__(self, tela_agendamento: TelaAgendamento, controlador_paciente: ControladorPacientes, controlador_enfermeiro: ControladorEnfermeiros, controlador_vacina: ControladorVacina):
+    def __init__(self, tela_agendamento: TelaAgendamento, controlador_paciente: ControladorPacientes, controlador_enfermeiro: ControladorEnfermeiros, controlador_vacina: ControladorVacina, mediator: Mediator):
         self.__tela_agendamento = tela_agendamento
         self.__controlador_paciente = controlador_paciente
         self.__controlador_enfermeiro = controlador_enfermeiro
         self.__controlador_vacina = controlador_vacina
         self.__agendamento_DAO = AgendamentoDAO()
+        self.__mediator = mediator
         if len(self.__agendamento_DAO.get_all()) == 0:
             self.__gera_codigo = int(500) #codigo dos agendamentos começa em 500
         else:
@@ -51,13 +55,13 @@ class ControladorAgendamento():
                                         else:
                                             break
                                     except CampoEmBrancoException as mensagem:
-                                        self.__tela_agendamento.mensagem(mensagem)
+                                        self.__mediator.mensagem(mensagem)
                             except ListaVaziaException as mensagem:
-                                self.__tela_agendamento.mensagem(mensagem)
+                                self.__mediator.mensagem(mensagem)
                     except ListaVaziaException as mensagem:
-                        self.__tela_agendamento.mensagem(mensagem)
+                        self.__mediator.mensagem(mensagem)
             except ListaVaziaException as mensagem:
-                self.__tela_agendamento.mensagem(mensagem)
+                self.__mediator.mensagem(mensagem)
         if dados_agendamento is not None and dados_agendamento['paciente'] != '' and dados_agendamento['enfermeiro'] != '' and dados_agendamento['data'] != '' and dados_agendamento['hora'] != '':
             codigo_paciente = int(dados_agendamento['paciente'].split(' ')[0])
             codigo_enfermeiro = int(dados_agendamento['enfermeiro'].split(' ')[0])
@@ -85,7 +89,7 @@ class ControladorAgendamento():
                                 else:
                                     break
                             except CampoEmBrancoException as mensagem:
-                                self.__tela_agendamento.mensagem(mensagem)
+                                self.__mediator.mensagem(mensagem)
                         if codigo_da_vacina is not None:
                             vacina = self.__controlador_vacina.encontra_vacina_por_codigo(codigo_da_vacina)
                             dose = 1
@@ -107,20 +111,20 @@ class ControladorAgendamento():
                             else:    
                                 raise VacinaIndisponivelException
                         except VacinaIndisponivelException as mensagem:
-                            self.__tela_agendamento.mensagem(mensagem)
+                            self.__mediator.mensagem(mensagem)
                 else:    
                     mensagem = 'Este paciente já tomou duas doses da vacina. Não é possível fazer um novo agendamento.'
-                    self.__tela_agendamento.mensagem(mensagem)
+                    self.__mediator.mensagem(mensagem)
             else:
                 mensagem = 'Este paciente já possui um agendamento em aberto. Conclua ou exclua o agendamento existente antes de cadastrar outro.'
-                self.__tela_agendamento.mensagem(mensagem)
+                self.__mediator.mensagem(mensagem)
        
     def encontra_agendamento_por_paciente(self, paciente):
         agendamento_selecionado = None
         for agendamento in self.__agendamento_DAO.get_all():
             if agendamento.paciente == paciente:
                 agendamento_selecionado = agendamento
-        self.__tela_agendamento.mensagem(agendamento_selecionado)
+        self.__mediator.mensagem(agendamento_selecionado)
         return agendamento_selecionado
 
     def escolher_agendamento(self, lista):
@@ -139,9 +143,9 @@ class ControladorAgendamento():
                         else:
                             break
                     except CampoEmBrancoException as mensagem:
-                        self.__tela_agendamento.mensagem(mensagem)
+                        self.__mediator.mensagem(mensagem)
             except ListaVaziaException as mensagem:
-                self.__tela_agendamento.mensagem(mensagem)
+                self.__mediator.mensagem(mensagem)
         return codigo
     
     def edita_agendamento(self):
@@ -171,7 +175,7 @@ class ControladorAgendamento():
                     else:
                         break
         except ListaVaziaException as mensagem:
-            self.__tela_agendamento.mensagem(mensagem)
+            self.__mediator.mensagem(mensagem)
 
 
 
@@ -193,7 +197,7 @@ class ControladorAgendamento():
                     else:
                         opcoes_de_lista[valor_lido]()
         except ListaVaziaException as mensagem:
-            self.__tela_agendamento.mensagem(mensagem)
+            self.__mediator.mensagem(mensagem)
 
     def lista_todos_agendamentos(self):
         lista_agendamentos=[]
@@ -225,7 +229,7 @@ class ControladorAgendamento():
             else:
                 self.__tela_agendamento.listar_agendamentos(self.lista_agendamentos_concluidos())
         except ListaVaziaException as mensagem:
-            self.__tela_agendamento.mensagem(mensagem)
+            self.__mediator.mensagem(mensagem)
 
     def mostra_agendamentos_em_aberto(self):
         try:
@@ -234,7 +238,7 @@ class ControladorAgendamento():
             else:
                 self.__tela_agendamento.listar_agendamentos(self.lista_agendamentos_em_aberto())
         except ListaVaziaException as mensagem:
-            self.__tela_agendamento.mensagem(mensagem)
+            self.__mediator.mensagem(mensagem)
 
     def mostra_todos_agendamentos(self):
         self.__tela_agendamento.listar_agendamentos(self.lista_todos_agendamentos())
