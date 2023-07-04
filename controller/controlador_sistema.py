@@ -11,13 +11,17 @@ from view.tela_agendamento import TelaAgendamento
 from view.tela_sistema import TelaSistema
 from controller.excecoes import ListaVaziaException
 
-class ControladorSistema():
-    def __init__(self, tela_sistema: TelaSistema):
+from model.mediador import Mediator
+
+class ControladorSistema(Mediator):
+    def __init__(self,  tela_sistema: TelaSistema, controlador_pacientes:ControladorPacientes, controlador_enfermeiros: ControladorEnfermeiros, controlador_vacinas: ControladorVacina, controlador_agendamento: ControladorAgendamento):
         self.__tela_sistema = tela_sistema
-        self.__controlador_pacientes = ControladorPacientes(TelaPaciente())
-        self.__controlador_enfermeiros = ControladorEnfermeiros(TelaEnfermeiros())
-        self.__controlador_vacinas = ControladorVacina(TelaVacina())
-        self.__controlador_agendamento = ControladorAgendamento(TelaAgendamento(), self.__controlador_pacientes, self.__controlador_enfermeiros, self.__controlador_vacinas)
+        self.__controlador_pacientes = controlador_pacientes
+        self.__controlador_enfermeiros = controlador_enfermeiros
+        self.__controlador_vacinas = controlador_vacinas
+        self.__controlador_agendamento = controlador_agendamento
+        self.__mediator = Mediator()
+        # ^- ControladorAgendamento(TelaAgendamento(), self.__controlador_pacientes, self.__controlador_enfermeiros, self.__controlador_vacinas)
     
     def abre_menu_principal(self):
 
@@ -46,7 +50,7 @@ class ControladorSistema():
                 else:
                     raise ListaVaziaException("atendimento para o enfermeiro selecionado")
             except ListaVaziaException as mensagem:
-                self.__tela_sistema.mensagem(mensagem)
+                self.__mediator.mensagem(mensagem)
             
     def gera_relatorio(self):
         lista_pacientes = self.__controlador_pacientes.lista_pacientes()
