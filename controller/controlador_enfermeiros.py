@@ -1,5 +1,8 @@
 import sys
 sys.path.append(".")
+
+from model.mediador import Mediator
+
 from model.enfermeiro import Enfermeiro
 from model.enfermeiro_dao import EnfermeiroDAO
 from view.tela_enfermeiro import TelaEnfermeiros
@@ -9,9 +12,10 @@ from controller.excecoes import NenhumSelecionadoException
 
 class ControladorEnfermeiros():
 
-    def __init__(self, tela_enfermeiros: TelaEnfermeiros):
+    def __init__(self, tela_enfermeiros: TelaEnfermeiros, mediator: Mediator):
         self.__tela_enfermeiros = tela_enfermeiros
         self.__enfermeiro_DAO = EnfermeiroDAO()
+        self.__mediator = mediator
         if len(self.__enfermeiro_DAO.get_all()) == 0:
             self.__gera_codigo = int(100) #codigo dos enfermeiros começa em 100
         else:
@@ -30,7 +34,7 @@ class ControladorEnfermeiros():
                 else:
                     break
             except CampoEmBrancoException as mensagem:
-                self.__tela_enfermeiros.mensagem(mensagem)   
+                self.__mediator.mensagem(mensagem)   
         if nome is not None:
             self.__enfermeiro_DAO.add(Enfermeiro(nome, self.__gera_codigo)) 
             self.__gera_codigo += 1 #incrementa o codigo
@@ -39,7 +43,7 @@ class ControladorEnfermeiros():
         enfermeiro_selecionado = self.seleciona_enfermeiro()
         if enfermeiro_selecionado is not None:
             self.__enfermeiro_DAO.remove(enfermeiro_selecionado)
-            self.__tela_enfermeiros.mensagem('Excluido!')
+            self.__mediator.mensagem('Excluido!')
 
     def edita_enfermeiro(self):
         enfermeiro = self.__enfermeiro_DAO.get(self.seleciona_enfermeiro())
@@ -52,7 +56,7 @@ class ControladorEnfermeiros():
                     else:
                         break
                 except CampoEmBrancoException as mensagem:
-                    self.__tela_enfermeiros.mensagem(mensagem)
+                    self.__mediator.mensagem(mensagem)
         if enfermeiro is not None and novo_nome is not None:
             enfermeiro.nome = novo_nome
             self.__enfermeiro_DAO.update()
@@ -67,7 +71,7 @@ class ControladorEnfermeiros():
                 lista_enfermeiros = None
                 raise ListaVaziaException('enfermeiro') #exceção para lista vazia 
         except ListaVaziaException as mensagem:
-            self.__tela_enfermeiros.mensagem(mensagem)
+            self.__mediator.mensagem(mensagem)
         return lista_enfermeiros 
 
     def encontra_enfermeiro_por_codigo(self, codigo):
@@ -85,7 +89,7 @@ class ControladorEnfermeiros():
                 else: 
                     break
             except NenhumSelecionadoException as mensagem:
-                self.__tela_enfermeiros.mensagem(mensagem)
+                self.__mediator.mensagem(mensagem)
         return enfermeiro_selecionado
 
     def abre_tela_enfermeiros(self):
