@@ -1,7 +1,7 @@
 import sys
 sys.path.append(".")
 
-from model.mediador import Mediator
+
 
 from model.enfermeiro import Enfermeiro
 from model.enfermeiro_dao import EnfermeiroDAO
@@ -9,6 +9,8 @@ from view.tela_enfermeiro import TelaEnfermeiros
 from controller.excecoes import ListaVaziaException
 from controller.excecoes import CampoEmBrancoException
 from controller.excecoes import NenhumSelecionadoException
+
+from model.mediador import Mediator
 
 class ControladorEnfermeiros():
 
