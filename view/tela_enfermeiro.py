@@ -1,8 +1,9 @@
 import os
 import PySimpleGUI as sg
 
+from model.mediador import Mediator
 
-class TelaEnfermeiros:
+class TelaEnfermeiros(Mediator):
 
     def __init__(self):
         self.__window = None

@@ -14,6 +14,6 @@ from model.mediador import Mediator
 
 if __name__ == "__main__":
 
-    controlador_sistema = ControladorSistema(TelaSistema(), ControladorPacientes(TelaPaciente()),ControladorEnfermeiros(TelaEnfermeiros(), Mediator), ControladorVacina(TelaVacina()),ControladorAgendamento(TelaAgendamento(), ControladorPacientes, ControladorEnfermeiros(TelaEnfermeiros(), Mediator), ControladorVacina))
+    controlador_sistema = ControladorSistema(TelaSistema(), ControladorPacientes(TelaPaciente()),ControladorEnfermeiros(TelaEnfermeiros()), ControladorVacina(TelaVacina()),ControladorAgendamento(TelaAgendamento(), ControladorPacientes, ControladorEnfermeiros(TelaEnfermeiros()), ControladorVacina))
     controlador_sistema.abre_menu_principal()
     

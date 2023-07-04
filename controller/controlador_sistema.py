@@ -13,7 +13,7 @@ from controller.excecoes import ListaVaziaException
 
 from model.mediador import Mediator
 
-class ControladorSistema(Mediator):
+class ControladorSistema():
     def __init__(self,  tela_sistema: TelaSistema, controlador_pacientes:ControladorPacientes, controlador_enfermeiros: ControladorEnfermeiros, controlador_vacinas: ControladorVacina, controlador_agendamento: ControladorAgendamento):
         self.__tela_sistema = tela_sistema
         self.__controlador_pacientes = controlador_pacientes
