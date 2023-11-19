@@ -158,8 +158,9 @@ class ControladorAgendamento():
                         vacina_atual = str(agendamento_selecionado.vacina.codigo) + ' - ' + str(agendamento_selecionado.vacina.tipo) + ' - ' + str(agendamento_selecionado.vacina.fabricante)
                         dados_atuais = {'paciente': paciente_atual, 'enfermeiro': enfermeiro_atual, 'data': agendamento_selecionado.data_hora.split(' - ')[0], 'hora': agendamento_selecionado.data_hora.split(' - ')[1], 'vacina': vacina_atual}
                         agendamento_auxiliar = self.inserir_novo_agendamento(dados_atuais)
-                        if agendamento_auxiliar is None:
-                            break
+                        while node is not None:
+                            node = node.parent()
+                            print(node)
                         else:
                             agendamento_selecionado.paciente = agendamento_auxiliar.paciente
                             agendamento_selecionado.enfermeiro = agendamento_auxiliar.enfermeiro
@@ -167,9 +168,13 @@ class ControladorAgendamento():
                             agendamento_selecionado.vacina = agendamento_auxiliar.vacina
                             self.__agendamento_DAO.remove(agendamento_auxiliar.codigo)
                             self.__agendamento_DAO.update()
-                            break
+                            while node is not None:
+                                node = node.parent()
+                                print(node)
                     else:
-                        break
+                       while node is not None:
+                            node = node.parent()
+                            print(node)
         except ListaVaziaException as mensagem:
             self.__tela_agendamento.mensagem(mensagem)
 
